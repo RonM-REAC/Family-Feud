@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Family Feud Board</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Impact&family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Loading screen -->
+  <div id="loading" class="loading-screen">
+    <div class="spinner"></div>
+    <p>Loading Family Feud...</p>
+  </div>
+
+  <!-- Main Game Board -->
+  <div id="game" class="game-container hidden">
+    <!-- Header -->
+    <header class="header">
+      <div class="team team-left">
+        <div class="team-name" id="team1-name">FAMILY 1</div>
+        <div class="team-score" id="team1-score">0</div>
+      </div>
+
+      <div class="logo-area">
+        <div class="logo">FAMILY FEUD</div>
+        <div class="round-info" id="round-info">ROUND 1</div>
+      </div>
+
+      <div class="team team-right">
+        <div class="team-name" id="team2-name">FAMILY 2</div>
+        <div class="team-score" id="team2-score">0</div>
+      </div>
+    </header>
+
+    <!-- Question -->
+    <div class="question-bar">
+      <div id="question-text">Survey says...</div>
+    </div>
+
+    <!-- The Board -->
+    <div class="board" id="answer-board">
+      <!-- Answers will be injected here -->
+    </div>
+
+    <!-- Strikes -->
+    <div class="strikes" id="strikes">
+      <div class="strike" data-strike="1">X</div>
+      <div class="strike" data-strike="2">X</div>
+      <div class="strike" data-strike="3">X</div>
+    </div>
+
+    <!-- Controls hint (hidden in fullscreen / presentation) -->
+    <div class="controls-hint" id="controls-hint">
+      <strong>Controls:</strong>
+      1–8 = Reveal &nbsp;|&nbsp;
+      Space = Strike &nbsp;|&nbsp;
+      N = Next &nbsp;|&nbsp;
+      R = Reset strikes &nbsp;|&nbsp;
+      S / Shift+S = Award points &nbsp;|&nbsp;
+      M = Mute &nbsp;|&nbsp;
+      F = Fullscreen
+    </div>
+
+    <!-- Mute button -->
+    <button id="mute-btn" class="mute-btn" title="Mute sounds (M)">🔊</button>
+  </div>
+
+  <!-- Big X overlay for wrong answer -->
+  <div id="big-x" class="big-x hidden">X</div>
+
+  <!-- Point flash -->
+  <div id="point-flash" class="point-flash hidden"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/sounds.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Questions · Survey Showdown</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Source+Sans+3:wght@400;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/site.css" />
+</head>
+<body data-page="admin">
+  <header class="nav">
+    <a class="brand" href="index.html">SURVEY SHOWDOWN</a>
+    <nav class="links">
+      <a data-nav="home" href="index.html">Home</a>
+      <a data-nav="board" href="board.html">Board</a>
+      <a data-nav="admin" href="admin.html">Questions</a>
+    </nav>
+  </header>
+  <main class="wrap" style="max-width:760px">
+    <h1 style="font-size:3rem">QUESTIONS</h1>
+    <p>Surveys stay in this browser. You can also upload them to Supabase.</p>
+    <form id="form" class="panel">
+      <label>Question<textarea id="question" rows="2" required placeholder="Name something people forget on a trip"></textarea></label>
+      <div id="answers"></div>
+      <button class="gold" style="margin-top:14px" type="submit">Save question</button>
+    </form>
+    <section class="panel" style="margin-top:16px">
+      <h2>Saved here</h2>
+      <div id="list"></div>
+      <div class="actions">
+        <button id="export" type="button">Download JSON</button>
+        <label class="file-label">Import JSON<input id="import" type="file" accept="application/json" /></label>
+      </div>
+    </section>
+    <section class="panel" style="margin-top:16px">
+      <h2>Optional Supabase</h2>
+      <p>Table <code>surveys</code> with columns <code>id</code> text, <code>question</code> text, <code>answers</code> jsonb. See README.md for the SQL.</p>
+      <label>Project URL<input id="url" placeholder="https://your-project.supabase.co" /></label>
+      <label>Anon key<input id="key" placeholder="eyJ..." /></label>
+      <div class="actions">
+        <button id="upload" class="gold" type="button">Upload</button>
+        <button id="download" type="button">Download</button>
+      </div>
+      <p id="note" class="note"></p>
+    </section>
+  </main>
+  <script>
+    document.getElementById("answers").innerHTML = Array.from({ length: 8 }, (_, i) => `
+      <div class="grid8">
+        <input data-answer placeholder="Answer ${i + 1}" />
+        <input data-points type="number" min="0" placeholder="0" />
+      </div>`).join("");
+  </script>
+  <script src="js/app.js"></script>
+</body>
+</html>

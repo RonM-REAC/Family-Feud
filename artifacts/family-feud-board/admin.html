@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Family Feud – Admin</title>
+  <link rel="stylesheet" href="css/admin.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="admin-container">
+    <header class="admin-header">
+      <h1>Family Feud Admin</h1>
+      <p>Manage survey questions & answers. Changes appear live on the board.</p>
+      <a href="index.html" class="btn btn-secondary" target="_blank">Open Game Board →</a>
+    </header>
+
+    <section class="card">
+      <h2>Add / Edit Question</h2>
+      <form id="question-form">
+        <input type="hidden" id="question-id" />
+
+        <label>Question text</label>
+        <textarea id="question-text" rows="2" placeholder="Name something people do when they can't sleep..." required></textarea>
+
+        <div class="answers-grid" id="answers-grid">
+          <!-- 8 answer slots -->
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="save-btn">Save Question</button>
+          <button type="button" class="btn btn-secondary" id="cancel-btn" style="display:none;">Cancel Edit</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>All Questions <span id="question-count"></span></h2>
+      <div id="questions-list" class="questions-list">
+        <p class="empty">Loading...</p>
+      </div>
+    </section>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

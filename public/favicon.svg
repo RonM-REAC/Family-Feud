@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Survey Showdown">
+  <rect width="32" height="32" rx="7" fill="#071422"/>
+  <rect x="3.5" y="4" width="25" height="24" rx="3.5" fill="#10283f" stroke="#f0c43a" stroke-width="2"/>
+  <rect x="6.5" y="7.5" width="19" height="4.2" rx="1" fill="#f4efe4"/>
+  <rect x="6.5" y="13.6" width="19" height="4.2" rx="1" fill="#f0c43a"/>
+  <rect x="6.5" y="19.7" width="10.5" height="4.2" rx="1" fill="#f4efe4"/>
+  <path d="M19.4 19.6 L25.2 25.4 M25.2 19.6 L19.4 25.4" stroke="#e23d4a" stroke-width="2.2" stroke-linecap="round"/>
+</svg>
