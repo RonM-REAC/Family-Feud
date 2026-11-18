@@ -327,6 +327,25 @@ function bootBoard() {
     paintScores();
   }
 
+  function resetScores() {
+    if (!confirm("Reset both team scores to 0?")) return;
+    scores.leftScore = 0;
+    scores.rightScore = 0;
+    paintScores();
+  }
+
+  function transfer(from, to) {
+    const amount = scores[from];
+    if (!amount) return;
+    scores[to] += amount;
+    scores[from] = 0;
+    sounds.points();
+    flash.hidden = false;
+    flash.textContent = "\u2192 " + amount;
+    setTimeout(() => { flash.hidden = true; }, 1100);
+    paintScores();
+  }
+
   function go(delta) {
     index = (index + delta + surveys.length) % surveys.length;
     open = new Set();
@@ -343,6 +362,9 @@ function bootBoard() {
   document.querySelector("#clear").addEventListener("click", () => { strikes = 0; paint(); });
   document.querySelector("#points-a").addEventListener("click", () => award("leftScore"));
   document.querySelector("#points-b").addEventListener("click", () => award("rightScore"));
+  document.querySelector("#transfer-ab").addEventListener("click", () => transfer("leftScore", "rightScore"));
+  document.querySelector("#transfer-ba").addEventListener("click", () => transfer("rightScore", "leftScore"));
+  document.querySelector("#reset-scores").addEventListener("click", resetScores);
   document.querySelector("#prev").addEventListener("click", () => go(-1));
   document.querySelector("#next").addEventListener("click", () => go(1));
   document.querySelector("#mute").addEventListener("click", (e) => {
