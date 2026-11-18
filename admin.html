@@ -30,6 +30,7 @@
       <div id="list"></div>
       <div class="actions">
         <button id="export" type="button">Download</button>
+        <button id="print-all" type="button">Print all</button>
         <label class="file-label">Import JSON<input id="import" type="file" accept="application/json" /></label>
       </div>
     </section>
@@ -53,5 +54,76 @@
       </div>`).join("");
   </script>
   <script src="js/app.js"></script>
+  <script>
+    (function () {
+      function esc(s) {
+        return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+        });
+      }
+
+      // Finds the saved surveys in this browser's localStorage
+      function findSurveys() {
+        for (var i = 0; i < localStorage.length; i++) {
+          try {
+            var v = JSON.parse(localStorage.getItem(localStorage.key(i)));
+            if (Array.isArray(v) && v.length && v[0] && typeof v[0] === "object" && "question" in v[0] && "answers" in v[0]) return v;
+          } catch (e) {}
+        }
+        return [];
+      }
+
+      function normalizeAnswer(a) {
+        if (a == null) return null;
+        var text, pts;
+        if (typeof a === "string") { text = a; pts = ""; }
+        else if (Array.isArray(a)) { text = a[0]; pts = a[1]; }
+        else {
+          text = a.text != null ? a.text : a.answer != null ? a.answer : a.label != null ? a.label : a.name;
+          pts = a.points != null ? a.points : a.score != null ? a.score : a.value;
+        }
+        text = String(text == null ? "" : text).trim();
+        if (!text) return null;
+        return { text: text, points: Number(pts) || 0 };
+      }
+
+      function printAll() {
+        var surveys = findSurveys();
+        if (!surveys.length) { alert("No saved questions found in this browser."); return; }
+
+        var body = surveys.map(function (s, qi) {
+          var answers = (s.answers || []).map(normalizeAnswer).filter(Boolean);
+          var total = answers.reduce(function (n, a) { return n + a.points; }, 0);
+          var rows = answers.map(function (a, ai) {
+            return "<tr><td class='n'>" + (ai + 1) + "</td><td>" + esc(a.text) + "</td><td class='p'>" + a.points + "</td></tr>";
+          }).join("");
+          return "<section><h2>" + (qi + 1) + ". " + esc(s.question) + "</h2>" +
+            "<table><thead><tr><th class='n'>#</th><th>Answer</th><th class='p'>Points</th></tr></thead><tbody>" + rows +
+            "</tbody><tfoot><tr><td></td><td>Total</td><td class='p'>" + total + "</td></tr></tfoot></table></section>";
+        }).join("");
+
+        var w = window.open("", "_blank");
+        if (!w) { alert("Please allow pop-ups to print."); return; }
+        w.document.write(
+          "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Family Feud - All Questions</title><style>" +
+          "body{font-family:Arial,Helvetica,sans-serif;color:#000;margin:24px}" +
+          "h1{margin:0 0 4px}.meta{color:#555;margin:0 0 20px;font-size:14px}" +
+          "section{margin-bottom:22px;page-break-inside:avoid}" +
+          "h2{font-size:17px;margin:0 0 6px}" +
+          "table{width:100%;border-collapse:collapse;font-size:14px}" +
+          "th,td{border:1px solid #999;padding:5px 8px;text-align:left}" +
+          "th{background:#eee}.n{width:40px;text-align:center}.p{width:80px;text-align:right}" +
+          "tfoot td{font-weight:bold;background:#f6f6f6}" +
+          "</style></head><body><h1>Family Feud</h1><p class='meta'>" + surveys.length + " question(s) &middot; " +
+          new Date().toLocaleDateString() + "</p>" + body + "</body></html>"
+        );
+        w.document.close();
+        w.focus();
+        setTimeout(function () { w.print(); }, 300);
+      }
+
+      document.getElementById("print-all").addEventListener("click", printAll);
+    })();
+  </script>
 </body>
 </html>
