@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Board · Survey Showdown</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Source+Sans+3:wght@400;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/site.css" />
+</head>
+<body data-page="board" class="board-page">
+  <header class="nav">
+    <a class="brand" href="index.html">SURVEY SHOWDOWN</a>
+    <nav class="links">
+      <a data-nav="home" href="index.html">Home</a>
+      <a data-nav="board" href="board.html">Board</a>
+      <a data-nav="admin" href="admin.html">Questions</a>
+    </nav>
+  </header>
+  <div class="stage">
+    <div class="scoreline">
+      <div class="team">
+        <input id="left-name" aria-label="Team A name" value="TEAM A" />
+        <strong id="left-score">0</strong>
+      </div>
+      <div style="text-align:center">
+        <div class="logo">SHOWDOWN</div>
+        <div id="count" class="kicker">1 / 1</div>
+      </div>
+      <div class="team">
+        <input id="right-name" aria-label="Team B name" value="TEAM B" />
+        <strong id="right-score">0</strong>
+      </div>
+    </div>
+    <div id="question" class="question">Survey says...</div>
+    <div id="slots" class="slots"></div>
+    <div class="strikes">
+      <div class="x" data-strike="1">X</div>
+      <div class="x" data-strike="2">X</div>
+      <div class="x" data-strike="3">X</div>
+    </div>
+    <div class="controls">
+      <button id="strike" class="red" type="button">Strike</button>
+      <button id="clear" type="button">Clear X</button>
+      <button id="points-a" class="gold" type="button">Points A</button>
+      <button id="points-b" class="gold" type="button">Points B</button>
+      <button id="prev" type="button">Prev</button>
+      <button id="next" type="button">Next</button>
+      <button id="mute" type="button">Sound on</button>
+    </div>
+  </div>
+  <div id="bigx" class="bigx" hidden>X</div>
+  <div id="flash" class="flash" hidden></div>
+  <script src="js/app.js"></script>
+</body>
+</html>

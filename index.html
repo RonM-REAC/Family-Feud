@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Survey Showdown</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Source+Sans+3:wght@400;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/site.css" />
+</head>
+<body data-page="home">
+  <header class="nav">
+    <a class="brand" href="index.html">SURVEY SHOWDOWN</a>
+    <nav class="links">
+      <a data-nav="home" href="index.html">Home</a>
+      <a data-nav="board" href="board.html">Board</a>
+      <a data-nav="admin" href="admin.html">Questions</a>
+    </nav>
+  </header>
+  <main class="wrap center">
+    <p class="kicker">LIVE SURVEY BOARD</p>
+    <h1>SURVEY<br />SHOWDOWN</h1>
+    <p class="lede" style="margin-inline:auto">Host a survey round on a big screen. Reveal answers, drop strikes, and bank the points. This folder is ready for GitHub Pages.</p>
+    <div class="row">
+      <a class="gold" href="board.html">Open the board</a>
+      <a href="admin.html">Edit questions</a>
+    </div>
+    <section class="cards">
+      <article class="card"><div class="num">1</div><h2>Write surveys</h2><p>Add a question and up to eight ranked answers.</p></article>
+      <article class="card"><div class="num">2</div><h2>Project the board</h2><p>Keys 1–8 flip an answer. Space adds a strike.</p></article>
+      <article class="card"><div class="num">3</div><h2>Keep score</h2><p>S banks points for team A. Shift+S banks them for team B.</p></article>
+    </section>
+    <section class="panel" style="margin-top:18px;text-align:left">
+      <h2 class="kicker">BOARD KEYS</h2>
+      <div class="keys">
+        <div>1–8 reveal that answer</div>
+        <div>Space or X adds a strike</div>
+        <div>N or right arrow, next survey</div>
+        <div>R clears strikes</div>
+        <div>S awards points to team A</div>
+        <div>Shift+S awards points to team B</div>
+        <div>M mutes sound, F fullscreen</div>
+        <div>Click a slot to reveal it</div>
+      </div>
+    </section>
+  </main>
+  <script src="js/app.js"></script>
+</body>
+</html>
