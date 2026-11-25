@@ -170,6 +170,7 @@ function JackpotAdmin() {
                   <ActionButton secondary onClick={() => update({ scoresVisible: !state.scoresVisible }, state.scoresVisible ? "Scores hidden." : "Scores revealed.")}>{state.scoresVisible ? <><EyeOff className="h-4 w-4" /> Hide Scores</> : <><Eye className="h-4 w-4" /> Reveal Scores</>}</ActionButton>
                 </div>
                 <div className="mt-3 grid grid-cols-2 gap-2">
+                  <ActionButton secondary onClick={() => state.questions.length && changeQuestion((state.currentQuestion + 1) % state.questions.length)}>Next Question</ActionButton>
                   <ActionButton secondary onClick={resetRound}>Reset Round</ActionButton>
                   <ActionButton danger onClick={newGame}>New Game</ActionButton>
                 </div>
