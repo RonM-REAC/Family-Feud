@@ -13,7 +13,7 @@ function JackpotAdmin() {
   const [scoreDraft, setScoreDraft] = useState<[string, string]>(["0", "0"]);
   const [notice, setNotice] = useState("Connecting to Supabase…");
   const [saving, setSaving] = useState(false);
-  const [seconds, setSeconds] = useState(20);
+  const [, setClockTick] = useState(0);
 
   useEffect(() => {
     let alive = true;
@@ -30,7 +30,7 @@ function JackpotAdmin() {
     };
     void refresh();
     const poll = window.setInterval(() => void refresh(), 1500);
-    const clock = window.setInterval(() => setState((current) => current ? { ...current } : current), 500);
+    const clock = window.setInterval(() => setClockTick((tick) => tick + 1), 500);
     return () => { alive = false; window.clearInterval(poll); window.clearInterval(clock); };
   }, []);
 
@@ -40,7 +40,7 @@ function JackpotAdmin() {
     setDraftQuestion(q?.question ?? "");
     setDraftAnswers(q ? Array.from({ length: 10 }, (_, i) => q.answers[i] ?? blankAnswer()) : emptyAnswers());
     setScoreDraft([String(state.scores[0] ?? 0), String(state.scores[1] ?? 0)]);
-    setSeconds(getRemainingSeconds(state));
+ 
   }, [state?.currentQuestion, state?.updatedAt]);
 
   async function commit(next: JackpotState, message = "Changes saved and synced to the board.") {
@@ -163,7 +163,7 @@ function JackpotAdmin() {
                 </div>
                 <div className="mb-4 rounded-xl bg-[#071422] p-4 text-center">
                   <span className="text-xs font-black tracking-[0.2em] text-[#9ec4ff]">TIME REMAINING</span>
-                  <div className={`font-[family-name:var(--font-display)] text-6xl tabular-nums ${seconds <= 5 ? "text-rose-400" : "text-[#f0c43a]"}`}>{getRemainingSeconds(state)}</div>
+                  <div className={`font-[family-name:var(--font-display)] text-6xl tabular-nums ${getRemainingSeconds(state) <= 5 ? "text-rose-400" : "text-[#f0c43a]"}`}>{getRemainingSeconds(state)}</div>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <ActionButton secondary onClick={() => update({ activePlayer: state.activePlayer === 0 ? 1 : 0 }, "Player turn switched.")}>Switch Player</ActionButton>
