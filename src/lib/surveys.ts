@@ -35,6 +35,8 @@ const SAMPLES: Survey[] = [
       { text: "Listen to music", points: 6 },
       { text: "Worry", points: 5 },
       { text: "Get a snack", points: 3 },
+      { text: "Toss and turn", points: 2 },
+      { text: "Pray", points: 1 },
     ],
   },
   {
@@ -49,6 +51,8 @@ const SAMPLES: Survey[] = [
       { text: "Bad weather", points: 6 },
       { text: "Overslept", points: 4 },
       { text: "Car trouble", points: 3 },
+      { text: "Appointment", points: 2 },
+      { text: "Migraine", points: 1 },
     ],
   },
   {
@@ -63,6 +67,8 @@ const SAMPLES: Survey[] = [
       { text: "Scissors", points: 7 },
       { text: "Takeout menus", points: 5 },
       { text: "Matches", points: 4 },
+      { text: "Twist ties", points: 2 },
+      { text: "Coupons", points: 1 },
     ],
   },
 ];
@@ -91,7 +97,7 @@ export function newSurvey(): Survey {
   return {
     id: uid(),
     question: "",
-    answers: Array.from({ length: 8 }, () => ({ text: "", points: 0 })),
+    answers: Array.from({ length: 10 }, () => ({ text: "", points: 0 })),
   };
 }
 
@@ -103,7 +109,7 @@ export function normalizeSurvey(input: Survey): Survey {
     }))
     .filter((a) => a.text)
     .sort((a, b) => b.points - a.points)
-    .slice(0, 8);
+    .slice(0, 10);
   return {
     id: input.id || uid(),
     question: input.question.trim(),

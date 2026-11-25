@@ -36,8 +36,8 @@ function Home() {
 
         <div className="grid gap-4 md:grid-cols-3">
           {[
-            ["1", "Write surveys", "Add a question and up to eight ranked answers on the Questions page."],
-            ["2", "Project the board", "Open Board on the room screen. Keys 1–8 flip an answer with a flash."],
+            ["1", "Write surveys", "Add a question and up to ten ranked answers on the Questions page."],
+            ["2", "Project the board", "Open Board on the room screen. Keys 1–9 and 0 flip an answer with a flash."],
             ["3", "Keep score", "Space adds a strike. S banks the revealed points for team A, Shift+S for team B."],
           ].map(([n, title, body]) => (
             <article key={n} className="rounded-2xl border border-[#f0c43a]/25 bg-[#0c1c33] p-5">
@@ -51,7 +51,7 @@ function Home() {
         <section className="rounded-2xl border border-white/10 bg-black/25 p-5">
           <h2 className="text-sm font-bold tracking-[0.2em] text-[#f0c43a]">BOARD KEYS</h2>
           <ul className="mt-3 grid gap-2 text-sm text-[#d7e4f5] sm:grid-cols-2">
-            <li>1–8 reveal that answer</li>
+            <li>1–9 and 0 reveal that answer (0 is answer 10)</li>
             <li>Space or X adds a strike</li>
             <li>N or right arrow goes to the next survey</li>
             <li>R clears strikes</li>

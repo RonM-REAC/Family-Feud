@@ -17,7 +17,7 @@ Pages link to each other with relative paths:
 
 ## Play
 
-On the board: keys 1–8 reveal, Space strikes, S awards team A, Shift+S awards team B, N next, M mute, F fullscreen.
+On the board: keys 1–9 and 0 reveal (0 is answer 10), Space strikes, S awards team A, Shift+S awards team B, N next, M mute, F fullscreen.
 
 Questions are stored in the browser. Use Download JSON / Import JSON to move them between computers.
 

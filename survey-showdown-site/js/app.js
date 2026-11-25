@@ -9,6 +9,7 @@ const SAMPLES = [
     answers: [
       ["Count sheep", 28], ["Watch TV", 22], ["Read a book", 15], ["Warm milk", 12],
       ["Scroll a phone", 9], ["Listen to music", 6], ["Worry", 5], ["Get a snack", 3],
+      ["Toss and turn", 2], ["Pray", 1],
     ],
   },
   {
@@ -17,6 +18,7 @@ const SAMPLES = [
     answers: [
       ["Actually sick", 35], ["Need a day off", 18], ["Kids are home", 14], ["Doctor visit", 12],
       ["Too tired", 8], ["Bad weather", 6], ["Overslept", 4], ["Car trouble", 3],
+      ["Appointment", 2], ["Migraine", 1],
     ],
   },
   {
@@ -25,6 +27,7 @@ const SAMPLES = [
     answers: [
       ["Utensils", 32], ["Junk mail", 20], ["Batteries", 14], ["Rubber bands", 10],
       ["Tape", 8], ["Scissors", 7], ["Takeout menus", 5], ["Matches", 4],
+      ["Twist ties", 2], ["Coupons", 1],
     ],
   },
 ].map(pack);
@@ -69,7 +72,7 @@ function normalize(input) {
     .map((a) => ({ text: String(a.text || "").trim(), points: Math.max(0, Math.round(Number(a.points) || 0)) }))
     .filter((a) => a.text)
     .sort((a, b) => b.points - a.points)
-    .slice(0, 8);
+    .slice(0, 10);
   return { id: input.id || uid(), question: String(input.question || "").trim(), answers };
 }
 
@@ -287,7 +290,7 @@ function bootBoard() {
     const survey = surveys[index];
     count.textContent = index + 1 + " / " + surveys.length;
     question.textContent = survey.question;
-    slots.innerHTML = Array.from({ length: 8 }, (_, i) => {
+    slots.innerHTML = Array.from({ length: 10 }, (_, i) => {
       const answer = survey.answers[i];
       if (!answer) return `<div class="slot empty"><span class="n">${i + 1}</span></div>`;
       const on = open.has(i) ? " on" : "";
@@ -354,7 +357,8 @@ function bootBoard() {
   window.addEventListener("keydown", (e) => {
     if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
     const key = e.key.toLowerCase();
-    if (key >= "1" && key <= "8") reveal(Number(key) - 1);
+    if (key >= "1" && key <= "9") reveal(Number(key) - 1);
+    if (key === "0") reveal(9);
     if (key === " " || key === "x") { e.preventDefault(); addStrike(); }
     if (key === "n" || key === "arrowright") go(1);
     if (key === "arrowleft") go(-1);

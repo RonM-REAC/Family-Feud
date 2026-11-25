@@ -17,7 +17,7 @@ import {
 
 export const Route = createFileRoute("/admin")({ component: AdminPage });
 
-const emptyAnswers = (): Answer[] => Array.from({ length: 8 }, () => ({ text: "", points: 0 }));
+const emptyAnswers = (): Answer[] => Array.from({ length: 10 }, () => ({ text: "", points: 0 }));
 
 function AdminPage() {
   const [surveys, setSurveys] = useState<Survey[]>([]);
@@ -60,7 +60,7 @@ function AdminPage() {
   function edit(survey: Survey) {
     const answers = emptyAnswers();
     survey.answers.forEach((a, i) => {
-      if (i < 8) answers[i] = a;
+      if (i < 10) answers[i] = a;
     });
     setDraft({ ...survey, answers });
     window.scrollTo({ top: 0, behavior: "smooth" });

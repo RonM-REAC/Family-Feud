@@ -78,7 +78,8 @@ function BoardPage() {
     function onKey(e: KeyboardEvent) {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
       const key = e.key.toLowerCase();
-      if (key >= "1" && key <= "8") show(Number(key) - 1);
+      if (key >= "1" && key <= "9") show(Number(key) - 1);
+      if (key === "0") show(9);
       if (key === " " || key === "x") {
         e.preventDefault();
         strike();
@@ -138,7 +139,7 @@ function BoardPage() {
           </div>
 
           <div className="grid flex-1 grid-cols-1 gap-2 sm:grid-cols-2">
-            {Array.from({ length: 8 }, (_, i) => {
+            {Array.from({ length: 10 }, (_, i) => {
               const answer = survey.answers[i];
               const shown = open.includes(i);
               if (!answer) {

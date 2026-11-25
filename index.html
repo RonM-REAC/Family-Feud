@@ -3,14 +3,91 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Family Feud</title>
+  <title>Survey Showdown</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Source+Sans+3:wght@400;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/site.css" />
+  <style>
+:root {
+  --navy: #071422;
+  --panel: #10243f;
+  --gold: #f0c43a;
+  --cream: #f4efe4;
+  --blue: #9ec4ff;
+  --red: #e23d4a;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; background: var(--navy); color: var(--cream); font-family: "Source Sans 3", "Segoe UI", sans-serif; }
+a { color: inherit; }
+.nav {
+  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px;
+  padding: 12px 16px; border-bottom: 1px solid rgba(240,196,58,.35); background: rgba(7,20,34,.92);
+}
+.brand { font-family: Anton, Impact, sans-serif; letter-spacing: .18em; color: var(--gold); text-decoration: none; }
+.links { display: flex; gap: 8px; }
+.links a, button, .file-label {
+  border: 1px solid rgba(240,196,58,.45); border-radius: 999px; padding: 6px 12px;
+  text-decoration: none; font-weight: 700; background: transparent; color: var(--cream); cursor: pointer;
+}
+.links a.active, .gold { background: var(--gold); color: var(--navy); border-color: var(--gold); }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 28px 18px 48px; }
+h1 { font-family: Anton, Impact, sans-serif; font-size: clamp(3.2rem, 10vw, 7rem); line-height: .9; color: var(--gold); margin: 8px 0; letter-spacing: .04em; }
+.lede { max-width: 640px; font-size: 1.15rem; }
+.center { text-align: center; }
+.kicker { letter-spacing: .32em; font-size: .75rem; font-weight: 800; color: var(--blue); }
+.row { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 22px; }
+.cards { display: grid; gap: 14px; margin-top: 28px; }
+@media (min-width: 800px) { .cards { grid-template-columns: repeat(3, 1fr); } }
+.card, .panel { background: var(--panel); border: 1px solid rgba(255,255,255,.08); border-radius: 18px; padding: 16px; }
+.num { font-family: Anton, Impact, sans-serif; font-size: 2.4rem; color: var(--gold); }
+.keys { display: grid; gap: 6px; margin-top: 10px; }
+@media (min-width: 700px) { .keys { grid-template-columns: 1fr 1fr; } }
+label { display: block; font-size: .85rem; font-weight: 700; margin-top: 10px; }
+input, textarea {
+  width: 100%; margin-top: 4px; border-radius: 10px; border: 1px solid rgba(255,255,255,.16);
+  background: var(--navy); color: var(--cream); padding: 8px 10px; font: inherit;
+}
+.grid8 { display: grid; grid-template-columns: 1fr 5.5rem; gap: 8px; margin-top: 8px; }
+.q { background: #071422; border-radius: 12px; padding: 12px; margin-top: 10px; }
+.actions { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.note { color: var(--gold); min-height: 1.2em; }
+.board-page { min-height: 100vh; display: flex; flex-direction: column; }
+.stage { max-width: 1100px; margin: 0 auto; width: 100%; padding: 10px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.scoreline { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: stretch; }
+.team { border: 2px solid var(--gold); border-radius: 12px; text-align: center; background: #10243f; padding: 6px; }
+.team input { border: 0; text-align: center; font-weight: 800; letter-spacing: .14em; color: var(--gold); background: transparent; }
+.team strong { display: block; font-size: clamp(2rem, 5vw, 3.2rem); }
+.logo { font-family: Anton, Impact, sans-serif; color: var(--gold); letter-spacing: .16em; font-size: clamp(1.4rem, 3vw, 2.2rem); }
+.question { border: 2px solid var(--gold); background: #12315a; border-radius: 12px; text-align: center; font-weight: 800; font-size: clamp(1.05rem, 2.4vw, 1.6rem); padding: 12px; }
+.slots { display: grid; gap: 8px; }
+@media (min-width: 760px) { .slots { grid-template-columns: 1fr 1fr; } }
+.slot {
+  min-height: 64px; display: flex; border: 2px solid #2a4a7a; background: #0d2137; border-radius: 10px;
+  overflow: hidden; color: inherit; text-align: left; padding: 0; width: 100%;
+}
+.slot.on { border-color: var(--gold); box-shadow: 0 0 16px rgba(240,196,58,.35); }
+.slot .n { width: 48px; display: flex; align-items: center; justify-content: center; background: #1a3a6e; color: var(--gold); font-size: 1.4rem; font-weight: 900; }
+.slot .body { flex: 1; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; font-weight: 800; text-transform: uppercase; }
+.slot .body span { opacity: 0; }
+.slot.on .body span { opacity: 1; }
+.slot .pts { color: var(--gold); font-size: 1.3rem; }
+.slot.empty { opacity: .25; }
+.strikes { display: flex; justify-content: center; gap: 12px; }
+.x {
+  width: 58px; height: 58px; border: 4px solid #555; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+  font-size: 2rem; font-weight: 900; color: transparent;
+}
+.x.on { border-color: var(--red); color: var(--red); background: #2a0a0a; }
+.bigx { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 40vw; font-weight: 900; color: var(--red); pointer-events: none; }
+.flash { position: fixed; top: 38%; left: 50%; transform: translateX(-50%); font-size: 5rem; font-weight: 900; color: var(--gold); pointer-events: none; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.red { background: var(--red); border-color: var(--red); }
+.file-label input { display: none; }
+
+</style>
 </head>
 <body data-page="home">
   <header class="nav">
-    <a class="brand" href="index.html" aria-label="Family Feud"><img src="familyfeud.png" alt="Family Feud" style="display:block; height:40px; width:auto;" /></a>
+    <a class="brand" href="index.html">SURVEY SHOWDOWN</a>
     <nav class="links">
       <a data-nav="home" href="index.html">Home</a>
       <a data-nav="board" href="board.html">Board</a>
@@ -19,21 +96,21 @@
   </header>
   <main class="wrap center">
     <p class="kicker">LIVE SURVEY BOARD</p>
-    <h1><img src="familyfeud.png" alt="Family Feud" style="display:block; margin:0 auto; width:100%; max-width:420px; height:auto;" /></h1>
-    <p class="lede" style="margin-inline:auto">Host a survey round on a big screen. Reveal answers, drop strikes, and bank the points.</p>
+    <h1>SURVEY<br />SHOWDOWN</h1>
+    <p class="lede" style="margin-inline:auto">Host a survey round on a big screen. Reveal answers, drop strikes, and bank the points. This folder is ready for GitHub Pages.</p>
     <div class="row">
       <a class="gold" href="board.html">Open the board</a>
       <a href="admin.html">Edit questions</a>
     </div>
     <section class="cards">
-      <article class="card"><div class="num">1</div><h2>Write surveys</h2><p>Add a question and up to eight ranked answers.</p></article>
-      <article class="card"><div class="num">2</div><h2>Project the board</h2><p>Keys 1–8 flip an answer. Space adds a strike.</p></article>
+      <article class="card"><div class="num">1</div><h2>Write surveys</h2><p>Add a question and up to ten ranked answers.</p></article>
+      <article class="card"><div class="num">2</div><h2>Project the board</h2><p>Keys 1–9 and 0 flip an answer. 0 is answer 10.</p></article>
       <article class="card"><div class="num">3</div><h2>Keep score</h2><p>S banks points for team A. Shift+S banks them for team B.</p></article>
     </section>
     <section class="panel" style="margin-top:18px;text-align:left">
       <h2 class="kicker">BOARD KEYS</h2>
       <div class="keys">
-        <div>1–8 reveal that answer</div>
+        <div>1–9 and 0 reveal that answer (0 is answer 10)</div>
         <div>Space or X adds a strike</div>
         <div>N or right arrow, next survey</div>
         <div>R clears strikes</div>
@@ -44,6 +121,394 @@
       </div>
     </section>
   </main>
-  <script src="js/app.js"></script>
+  <script>
+const KEY = "survey-showdown-v1";
+const SETTINGS_KEY = "survey-showdown-settings";
+const SCORES_KEY = "survey-showdown-scores";
+
+const SAMPLES = [
+  {
+    id: "sample-sleep",
+    question: "Name something people do when they cannot sleep",
+    answers: [
+      ["Count sheep", 28], ["Watch TV", 22], ["Read a book", 15], ["Warm milk", 12],
+      ["Scroll a phone", 9], ["Listen to music", 6], ["Worry", 5], ["Get a snack", 3],
+      ["Toss and turn", 2], ["Pray", 1],
+    ],
+  },
+  {
+    id: "sample-sick",
+    question: "Name a reason people call in sick",
+    answers: [
+      ["Actually sick", 35], ["Need a day off", 18], ["Kids are home", 14], ["Doctor visit", 12],
+      ["Too tired", 8], ["Bad weather", 6], ["Overslept", 4], ["Car trouble", 3],
+      ["Appointment", 2], ["Migraine", 1],
+    ],
+  },
+  {
+    id: "sample-drawer",
+    question: "Name something you find in a kitchen drawer",
+    answers: [
+      ["Utensils", 32], ["Junk mail", 20], ["Batteries", 14], ["Rubber bands", 10],
+      ["Tape", 8], ["Scissors", 7], ["Takeout menus", 5], ["Matches", 4],
+      ["Twist ties", 2], ["Coupons", 1],
+    ],
+  },
+].map(pack);
+
+function pack(row) {
+  return {
+    id: row.id,
+    question: row.question,
+    answers: row.answers.map(([text, points]) => ({ text, points })),
+  };
+}
+
+function uid() {
+  return Math.random().toString(36).slice(2, 10);
+}
+
+function loadSurveys() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    const parsed = raw ? JSON.parse(raw) : null;
+    if (!Array.isArray(parsed) || !parsed.length) return SAMPLES;
+    return parsed;
+  } catch {
+    return SAMPLES;
+  }
+}
+
+function saveSurveys(list) {
+  localStorage.setItem(KEY, JSON.stringify(list));
+}
+
+function loadSettings() {
+  try {
+    return JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}");
+  } catch {
+    return {};
+  }
+}
+
+function normalize(input) {
+  const answers = (input.answers || [])
+    .map((a) => ({ text: String(a.text || "").trim(), points: Math.max(0, Math.round(Number(a.points) || 0)) }))
+    .filter((a) => a.text)
+    .sort((a, b) => b.points - a.points)
+    .slice(0, 10);
+  return { id: input.id || uid(), question: String(input.question || "").trim(), answers };
+}
+
+const audioBag = { ctx: null, muted: false };
+
+function audio() {
+  if (!audioBag.ctx) audioBag.ctx = new AudioContext();
+  if (audioBag.ctx.state === "suspended") audioBag.ctx.resume();
+  return audioBag.ctx;
+}
+
+function tone(freq, duration, type, gainValue, when = 0) {
+  if (audioBag.muted) return;
+  const a = audio();
+  const osc = a.createOscillator();
+  const gain = a.createGain();
+  osc.type = type;
+  osc.frequency.value = freq;
+  const t = a.currentTime + when;
+  gain.gain.setValueAtTime(0.0001, t);
+  gain.gain.exponentialRampToValueAtTime(gainValue, t + 0.012);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t + duration);
+  osc.connect(gain);
+  gain.connect(a.destination);
+  osc.start(t);
+  osc.stop(t + duration + 0.02);
+}
+
+const sounds = {
+  reveal() { tone(880, 0.16, "sine", 0.28); tone(1175, 0.32, "sine", 0.22, 0.06); },
+  strike() { tone(110, 0.42, "sawtooth", 0.22); tone(78, 0.4, "square", 0.12); },
+  points() { [523, 659, 784, 1046].forEach((f, i) => tone(f, 0.26, "triangle", 0.22, i * 0.07)); },
+  next() { tone(320, 0.14, "sine", 0.12); },
+  toggle() { audioBag.muted = !audioBag.muted; return audioBag.muted; },
+};
+
+function nav(active) {
+  document.querySelectorAll("[data-nav]").forEach((el) => {
+    if (el.getAttribute("data-nav") === active) el.classList.add("active");
+  });
+}
+
+function bootAdmin() {
+  nav("admin");
+  let surveys = loadSurveys();
+  const settings = loadSettings();
+  const question = document.querySelector("#question");
+  const note = document.querySelector("#note");
+  const list = document.querySelector("#list");
+  const url = document.querySelector("#url");
+  const key = document.querySelector("#key");
+  const editing = { id: "" };
+  url.value = settings.url || "";
+  key.value = settings.anonKey || "";
+
+  const inputs = [...document.querySelectorAll("[data-answer]")];
+  const points = [...document.querySelectorAll("[data-points]")];
+
+  function clearForm() {
+    editing.id = "";
+    question.value = "";
+    inputs.forEach((el) => { el.value = ""; });
+    points.forEach((el) => { el.value = ""; });
+  }
+
+  function render() {
+    list.innerHTML = surveys.map((s) => `
+      <article class="q">
+        <strong>${escapeHtml(s.question)}</strong>
+        <p>${escapeHtml(s.answers.map((a) => `${a.text} (${a.points})`).join(" · "))}</p>
+        <div class="actions">
+          <button type="button" data-edit="${s.id}">Edit</button>
+          <button type="button" class="red" data-del="${s.id}">Delete</button>
+        </div>
+      </article>`).join("") || "<p>No questions yet.</p>";
+  }
+
+  document.querySelector("#form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const clean = normalize({
+      id: editing.id,
+      question: question.value,
+      answers: inputs.map((el, i) => ({ text: el.value, points: points[i].value })),
+    });
+    if (!clean.question || !clean.answers.length) {
+      note.textContent = "Add a question and at least one answer.";
+      return;
+    }
+    surveys = surveys.some((s) => s.id === clean.id)
+      ? surveys.map((s) => (s.id === clean.id ? clean : s))
+      : [...surveys, clean];
+    saveSurveys(surveys);
+    clearForm();
+    render();
+    note.textContent = "Saved in this browser.";
+  });
+
+  list.addEventListener("click", (e) => {
+    const edit = e.target.closest("[data-edit]");
+    const del = e.target.closest("[data-del]");
+    if (edit) {
+      const found = surveys.find((s) => s.id === edit.dataset.edit);
+      if (!found) return;
+      editing.id = found.id;
+      question.value = found.question;
+      inputs.forEach((el, i) => { el.value = found.answers[i]?.text || ""; });
+      points.forEach((el, i) => { el.value = found.answers[i]?.points || ""; });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    if (del) {
+      surveys = surveys.filter((s) => s.id !== del.dataset.del);
+      saveSurveys(surveys);
+      render();
+    }
+  });
+
+  document.querySelector("#upload").addEventListener("click", async () => {
+    const cloud = { url: url.value.trim(), anonKey: key.value.trim() };
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(cloud));
+    if (!cloud.url || !cloud.anonKey) return (note.textContent = "Add a Supabase URL and anon key.");
+    const res = await fetch(cloud.url.replace(/\/+$/, "") + "/rest/v1/surveys", {
+      method: "POST",
+      headers: {
+        apikey: cloud.anonKey,
+        Authorization: "Bearer " + cloud.anonKey,
+        "Content-Type": "application/json",
+        Prefer: "resolution=merge-duplicates,return=minimal",
+      },
+      body: JSON.stringify(surveys),
+    });
+    note.textContent = res.ok ? "Uploaded to Supabase." : "Upload failed (" + res.status + ")";
+  });
+
+  document.querySelector("#download").addEventListener("click", async () => {
+    const cloud = { url: url.value.trim(), anonKey: key.value.trim() };
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(cloud));
+    if (!cloud.url || !cloud.anonKey) return (note.textContent = "Add a Supabase URL and anon key.");
+    const res = await fetch(cloud.url.replace(/\/+$/, "") + "/rest/v1/surveys?select=id,question,answers", {
+      headers: { apikey: cloud.anonKey, Authorization: "Bearer " + cloud.anonKey },
+    });
+    if (!res.ok) return (note.textContent = "Download failed (" + res.status + ")");
+    const rows = await res.json();
+    surveys = rows.map(normalize).filter((s) => s.question);
+    saveSurveys(surveys);
+    render();
+    note.textContent = "Loaded " + surveys.length + " surveys.";
+  });
+
+  document.querySelector("#export").addEventListener("click", () => {
+    const blob = new Blob([JSON.stringify(surveys, null, 2)], { type: "application/json" });
+    const href = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = href;
+    a.download = "surveys.json";
+    a.click();
+    URL.revokeObjectURL(href);
+  });
+
+  document.querySelector("#import").addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      surveys = JSON.parse(String(reader.result)).map(normalize).filter((s) => s.question);
+      saveSurveys(surveys);
+      render();
+      note.textContent = "Imported " + surveys.length + " surveys.";
+    };
+    reader.readAsText(file);
+  });
+
+  render();
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (ch) => {
+    const code = ch.charCodeAt(0);
+    if (code === 38) return "&" + "amp;";
+    if (code === 60) return "&" + "lt;";
+    if (code === 62) return "&" + "gt;";
+    if (code === 34) return "&" + "quot;";
+    return "&" + "#39;";
+  });
+}
+
+function bootBoard() {
+  nav("board");
+  const surveys = loadSurveys();
+  let index = 0;
+  let open = new Set();
+  let strikes = 0;
+  let scores = JSON.parse(localStorage.getItem(SCORES_KEY) || "null") || {
+    leftName: "TEAM A", rightName: "TEAM B", leftScore: 0, rightScore: 0,
+  };
+  const question = document.querySelector("#question");
+  const slots = document.querySelector("#slots");
+  const count = document.querySelector("#count");
+  const strikeEls = [...document.querySelectorAll("[data-strike]")];
+  const bigx = document.querySelector("#bigx");
+  const flash = document.querySelector("#flash");
+  const leftName = document.querySelector("#left-name");
+  const rightName = document.querySelector("#right-name");
+  const leftScore = document.querySelector("#left-score");
+  const rightScore = document.querySelector("#right-score");
+
+  function paintScores() {
+    leftName.value = scores.leftName;
+    rightName.value = scores.rightName;
+    leftScore.textContent = scores.leftScore;
+    rightScore.textContent = scores.rightScore;
+    localStorage.setItem(SCORES_KEY, JSON.stringify(scores));
+  }
+
+  function paint() {
+    const survey = surveys[index];
+    count.textContent = index + 1 + " / " + surveys.length;
+    question.textContent = survey.question;
+    slots.innerHTML = Array.from({ length: 10 }, (_, i) => {
+      const answer = survey.answers[i];
+      if (!answer) return `<div class="slot empty"><span class="n">${i + 1}</span></div>`;
+      const on = open.has(i) ? " on" : "";
+      return `<button class="slot${on}" data-slot="${i}"><span class="n">${i + 1}</span><span class="body"><span>${escapeHtml(answer.text)}</span><span class="pts">${answer.points}</span></span></button>`;
+    }).join("");
+    strikeEls.forEach((el, i) => el.classList.toggle("on", strikes > i));
+    paintScores();
+  }
+
+  function reveal(i) {
+    const survey = surveys[index];
+    if (!survey.answers[i] || open.has(i)) return;
+    open.add(i);
+    sounds.reveal();
+    paint();
+  }
+
+  function addStrike() {
+    if (strikes >= 3) return;
+    strikes += 1;
+    sounds.strike();
+    bigx.hidden = false;
+    setTimeout(() => { bigx.hidden = true; }, 700);
+    paint();
+  }
+
+  function award(side) {
+    const survey = surveys[index];
+    let total = 0;
+    open.forEach((i) => { total += survey.answers[i].points; });
+    if (!total) return;
+    scores[side] += total;
+    sounds.points();
+    flash.hidden = false;
+    flash.textContent = "+" + total;
+    setTimeout(() => { flash.hidden = true; }, 1100);
+    paintScores();
+  }
+
+  function go(delta) {
+    index = (index + delta + surveys.length) % surveys.length;
+    open = new Set();
+    strikes = 0;
+    sounds.next();
+    paint();
+  }
+
+  slots.addEventListener("click", (e) => {
+    const slot = e.target.closest("[data-slot]");
+    if (slot) reveal(Number(slot.dataset.slot));
+  });
+  document.querySelector("#strike").addEventListener("click", addStrike);
+  document.querySelector("#clear").addEventListener("click", () => { strikes = 0; paint(); });
+  document.querySelector("#points-a").addEventListener("click", () => award("leftScore"));
+  document.querySelector("#points-b").addEventListener("click", () => award("rightScore"));
+  document.querySelector("#prev").addEventListener("click", () => go(-1));
+  document.querySelector("#next").addEventListener("click", () => go(1));
+  document.querySelector("#mute").addEventListener("click", (e) => {
+    e.currentTarget.textContent = sounds.toggle() ? "Sound off" : "Sound on";
+  });
+  leftName.addEventListener("input", () => { scores.leftName = leftName.value.toUpperCase(); paintScores(); });
+  rightName.addEventListener("input", () => { scores.rightName = rightName.value.toUpperCase(); paintScores(); });
+
+  window.addEventListener("keydown", (e) => {
+    if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+    const key = e.key.toLowerCase();
+    if (key >= "1" && key <= "9") reveal(Number(key) - 1);
+    if (key === "0") reveal(9);
+    if (key === " " || key === "x") { e.preventDefault(); addStrike(); }
+    if (key === "n" || key === "arrowright") go(1);
+    if (key === "arrowleft") go(-1);
+    if (key === "r") { strikes = 0; paint(); }
+    if (key === "s") award(e.shiftKey ? "rightScore" : "leftScore");
+    if (key === "m") document.querySelector("#mute").click();
+    if (key === "f") {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+      else document.exitFullscreen();
+    }
+  });
+
+  if (!surveys.length) {
+    question.textContent = "Add a question first.";
+    return;
+  }
+  paint();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const page = document.body.dataset.page;
+  if (page === "admin") bootAdmin();
+  if (page === "board") bootBoard();
+  if (page === "home") nav("home");
+});
+
+</script>
 </body>
 </html>
