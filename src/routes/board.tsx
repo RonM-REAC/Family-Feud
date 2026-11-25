@@ -185,7 +185,20 @@ function BoardPage() {
             ))}
           </div>
 
-          <div className="flex flex-wrap justify-center gap-2 pb-2 text-sm font-bold">
+          <div className="sticky bottom-0 z-10 flex flex-col items-center gap-2 bg-[#071422] py-2">
+            <div className="flex flex-wrap justify-center gap-2">
+              {Array.from({ length: 10 }, (_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  className="h-10 w-10 rounded-full bg-[#1a3a6e] text-sm font-black"
+                  onClick={() => show(i)}
+                >
+                  {i + 1}
+                </button>
+              ))}
+            </div>
+            <div className="flex flex-wrap justify-center gap-2 text-sm font-bold">
             <button type="button" className="rounded-full bg-[#e23d4a] px-4 py-2" onClick={strike}>
               Strike
             </button>
@@ -211,6 +224,7 @@ function BoardPage() {
             >
               {muted ? "Sound off" : "Sound on"}
             </button>
+          </div>
           </div>
         </div>
       )}

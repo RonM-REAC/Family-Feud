@@ -338,6 +338,10 @@ function bootBoard() {
     paint();
   }
 
+  document.querySelector("#reveal-row").addEventListener("click", (e) => {
+    const hit = e.target.closest("[data-reveal]");
+    if (hit) reveal(Number(hit.dataset.reveal));
+  });
   slots.addEventListener("click", (e) => {
     const slot = e.target.closest("[data-slot]");
     if (slot) reveal(Number(slot.dataset.slot));

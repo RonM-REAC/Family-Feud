@@ -58,10 +58,14 @@ input, textarea {
 .team strong { display: block; font-size: clamp(2rem, 5vw, 3.2rem); }
 .logo { font-family: Anton, Impact, sans-serif; color: var(--gold); letter-spacing: .16em; font-size: clamp(1.4rem, 3vw, 2.2rem); }
 .question { border: 2px solid var(--gold); background: #12315a; border-radius: 12px; text-align: center; font-weight: 800; font-size: clamp(1.05rem, 2.4vw, 1.6rem); padding: 12px; }
-.slots { display: grid; gap: 8px; }
-@media (min-width: 760px) { .slots { grid-template-columns: 1fr 1fr; } }
+body.board-page { height: 100vh; overflow: hidden; }
+.board-page .stage { min-height: 0; height: 100%; }
+.slots { flex: 1; min-height: 0; display: grid; gap: 6px; }
+@media (min-width: 760px) {
+  .slots { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(5, minmax(0, 1fr)); }
+}
 .slot {
-  min-height: 44px; display: flex; border: 2px solid #2a4a7a; background: #0d2137; border-radius: 10px;
+  min-height: 0; height: 100%; display: flex; border: 2px solid #2a4a7a; background: #0d2137; border-radius: 10px;
   overflow: hidden; color: inherit; text-align: left; padding: 0; width: 100%;
 }
 .slot.on { border-color: var(--gold); box-shadow: 0 0 16px rgba(240,196,58,.35); }
@@ -81,7 +85,19 @@ input, textarea {
 .bigx.show { display: flex; }
 .flash { position: fixed; top: 38%; left: 50%; transform: translateX(-50%); font-size: 5rem; font-weight: 900; color: var(--gold); pointer-events: none; display: none; }
 .flash.show { display: block; }
-.controls { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.controls {
+  position: sticky; bottom: 0; z-index: 5; flex: 0 0 auto;
+  display: flex; flex-direction: column; gap: 8px; align-items: center;
+  padding: 8px 4px 10px; background: #071422;
+}
+.controls .row-btns { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.controls button {
+  background: #1a3a6e; color: var(--cream); border-color: rgba(240,196,58,.55);
+  padding: 8px 14px; font-size: 1rem;
+}
+.controls button.gold { background: var(--gold); color: var(--navy); }
+.controls button.red { background: var(--red); color: white; border-color: var(--red); }
+.controls button.num { min-width: 44px; padding-inline: 0; }
 .red { background: var(--red); border-color: var(--red); }
 .file-label input { display: none; }
 
@@ -119,13 +135,27 @@ input, textarea {
       <div class="x" data-strike="3">X</div>
     </div>
     <div class="controls">
-      <button id="strike" class="red" type="button">Strike</button>
-      <button id="clear" type="button">Clear X</button>
-      <button id="points-a" class="gold" type="button">Points A</button>
-      <button id="points-b" class="gold" type="button">Points B</button>
-      <button id="prev" type="button">Prev</button>
-      <button id="next" type="button">Next</button>
-      <button id="mute" type="button">Sound on</button>
+      <div class="row-btns" id="reveal-row">
+        <button class="num" type="button" data-reveal="0">1</button>
+        <button class="num" type="button" data-reveal="1">2</button>
+        <button class="num" type="button" data-reveal="2">3</button>
+        <button class="num" type="button" data-reveal="3">4</button>
+        <button class="num" type="button" data-reveal="4">5</button>
+        <button class="num" type="button" data-reveal="5">6</button>
+        <button class="num" type="button" data-reveal="6">7</button>
+        <button class="num" type="button" data-reveal="7">8</button>
+        <button class="num" type="button" data-reveal="8">9</button>
+        <button class="num" type="button" data-reveal="9">10</button>
+      </div>
+      <div class="row-btns">
+        <button id="strike" class="red" type="button">Strike</button>
+        <button id="clear" type="button">Clear X</button>
+        <button id="points-a" class="gold" type="button">Points A</button>
+        <button id="points-b" class="gold" type="button">Points B</button>
+        <button id="prev" type="button">Prev</button>
+        <button id="next" type="button">Next</button>
+        <button id="mute" type="button">Sound on</button>
+      </div>
     </div>
   </div>
   <div id="bigx" class="bigx" hidden>X</div>
@@ -471,6 +501,10 @@ function bootBoard() {
     paint();
   }
 
+  document.querySelector("#reveal-row").addEventListener("click", (e) => {
+    const hit = e.target.closest("[data-reveal]");
+    if (hit) reveal(Number(hit.dataset.reveal));
+  });
   slots.addEventListener("click", (e) => {
     const slot = e.target.closest("[data-slot]");
     if (slot) reveal(Number(slot.dataset.slot));
