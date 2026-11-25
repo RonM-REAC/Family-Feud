@@ -56,6 +56,8 @@ input, textarea {
 .team { border: 2px solid var(--gold); border-radius: 12px; text-align: center; background: #10243f; padding: 6px; }
 .team input { border: 0; text-align: center; font-weight: 800; letter-spacing: .14em; color: var(--gold); background: transparent; }
 .team strong { display: block; font-size: clamp(2rem, 5vw, 3.2rem); }
+.score-btns { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.score-btns button { font-size: .85rem; padding: 3px 12px; }
 .logo { font-family: Anton, Impact, sans-serif; color: var(--gold); letter-spacing: .16em; font-size: clamp(1.4rem, 3vw, 2.2rem); }
 .question { border: 2px solid var(--gold); background: #12315a; border-radius: 12px; text-align: center; font-weight: 800; font-size: clamp(1.05rem, 2.4vw, 1.6rem); padding: 12px; }
 body.board-page { height: 100vh; overflow: hidden; }
@@ -97,7 +99,6 @@ body.board-page { height: 100vh; overflow: hidden; }
 }
 .controls button.gold { background: var(--gold); color: var(--navy); }
 .controls button.red { background: var(--red); color: white; border-color: var(--red); }
-.controls button.num { min-width: 44px; padding-inline: 0; }
 .red { background: var(--red); border-color: var(--red); }
 .file-label input { display: none; }
 
@@ -117,6 +118,10 @@ body.board-page { height: 100vh; overflow: hidden; }
       <div class="team">
         <input id="left-name" aria-label="Team A name" value="TEAM A" />
         <strong id="left-score">0</strong>
+        <div class="score-btns">
+          <button type="button" data-adjust="left" aria-label="Adjust Team A score">Adjust</button>
+          <button type="button" data-reset="left" aria-label="Reset Team A score">Reset</button>
+        </div>
       </div>
       <div style="text-align:center">
         <div class="logo">SHOWDOWN</div>
@@ -125,6 +130,10 @@ body.board-page { height: 100vh; overflow: hidden; }
       <div class="team">
         <input id="right-name" aria-label="Team B name" value="TEAM B" />
         <strong id="right-score">0</strong>
+        <div class="score-btns">
+          <button type="button" data-adjust="right" aria-label="Adjust Team B score">Adjust</button>
+          <button type="button" data-reset="right" aria-label="Reset Team B score">Reset</button>
+        </div>
       </div>
     </div>
     <div id="question" class="question">Survey says...</div>
@@ -133,20 +142,9 @@ body.board-page { height: 100vh; overflow: hidden; }
       <div class="x" data-strike="1">X</div>
       <div class="x" data-strike="2">X</div>
       <div class="x" data-strike="3">X</div>
+      <div class="x" data-strike="4">X</div>
     </div>
     <div class="controls">
-      <div class="row-btns" id="reveal-row">
-        <button class="num" type="button" data-reveal="0">1</button>
-        <button class="num" type="button" data-reveal="1">2</button>
-        <button class="num" type="button" data-reveal="2">3</button>
-        <button class="num" type="button" data-reveal="3">4</button>
-        <button class="num" type="button" data-reveal="4">5</button>
-        <button class="num" type="button" data-reveal="5">6</button>
-        <button class="num" type="button" data-reveal="6">7</button>
-        <button class="num" type="button" data-reveal="7">8</button>
-        <button class="num" type="button" data-reveal="8">9</button>
-        <button class="num" type="button" data-reveal="9">10</button>
-      </div>
       <div class="row-btns">
         <button id="strike" class="red" type="button">Strike</button>
         <button id="clear" type="button">Clear X</button>
@@ -472,7 +470,7 @@ function bootBoard() {
   }
 
   function addStrike() {
-    if (strikes >= 3) return;
+    if (strikes >= 4) return;
     strikes += 1;
     sounds.strike();
     bigx.classList.add("show");
@@ -493,6 +491,29 @@ function bootBoard() {
     paintScores();
   }
 
+  function teamName(side) {
+    return scores[side + "Name"];
+  }
+
+  function adjustScore(side) {
+    const current = scores[side + "Score"];
+    const input = window.prompt("New score for " + teamName(side) + ":", current);
+    if (input === null) return;
+    const value = input.trim();
+    if (!/^\d+$/.test(value)) {
+      window.alert("Enter a whole number, 0 or higher.");
+      return;
+    }
+    scores[side + "Score"] = Number(value);
+    paintScores();
+  }
+
+  function resetScore(side) {
+    if (!window.confirm("Reset the score for " + teamName(side) + " to 0?")) return;
+    scores[side + "Score"] = 0;
+    paintScores();
+  }
+
   function go(delta) {
     index = (index + delta + surveys.length) % surveys.length;
     open = new Set();
@@ -501,9 +522,11 @@ function bootBoard() {
     paint();
   }
 
-  document.querySelector("#reveal-row").addEventListener("click", (e) => {
-    const hit = e.target.closest("[data-reveal]");
-    if (hit) reveal(Number(hit.dataset.reveal));
+  document.querySelectorAll("[data-adjust]").forEach((el) => {
+    el.addEventListener("click", () => adjustScore(el.dataset.adjust));
+  });
+  document.querySelectorAll("[data-reset]").forEach((el) => {
+    el.addEventListener("click", () => resetScore(el.dataset.reset));
   });
   slots.addEventListener("click", (e) => {
     const slot = e.target.closest("[data-slot]");
