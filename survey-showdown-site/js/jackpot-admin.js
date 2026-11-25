@@ -1,6 +1,6 @@
 /* JACKPOT admin. This is intentionally no-login; anyone with the URL can control the shared game. */
-const JP_SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL';
-const JP_SUPABASE_KEY = 'YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY';
+const JP_SUPABASE_URL = 'https://twzywooeefkbldrphsie.supabase.co';
+const JP_SUPABASE_KEY = 'sb_publishable_A1gGz_adW1DT8zIoyBIoww_K3AP1RZd';
 const JP = window.supabase.createClient(JP_SUPABASE_URL, JP_SUPABASE_KEY);
 const $ = id => document.getElementById(id);
 let state=null;let saveBusy=false;
