@@ -262,12 +262,28 @@ function tone(freq, duration, type, gainValue, when = 0) {
   osc.stop(t + duration + 0.02);
 }
 
+const clips = {
+  correct: new Audio("sounds/correctanswer.mp3"),
+  wrong: new Audio("sounds/wronganswer.mp3"),
+};
+Object.values(clips).forEach((clip) => { clip.preload = "auto"; });
+
+function playClip(clip) {
+  if (audioBag.muted) return;
+  clip.currentTime = 0;
+  clip.play().catch((err) => console.warn("Sound did not play:", err));
+}
+
 const sounds = {
-  reveal() { tone(880, 0.16, "sine", 0.28); tone(1175, 0.32, "sine", 0.22, 0.06); },
-  strike() { tone(110, 0.42, "sawtooth", 0.22); tone(78, 0.4, "square", 0.12); },
+  reveal() { playClip(clips.correct); },
+  strike() { playClip(clips.wrong); },
   points() { [523, 659, 784, 1046].forEach((f, i) => tone(f, 0.26, "triangle", 0.22, i * 0.07)); },
   next() { tone(320, 0.14, "sine", 0.12); },
-  toggle() { audioBag.muted = !audioBag.muted; return audioBag.muted; },
+  toggle() {
+    audioBag.muted = !audioBag.muted;
+    if (audioBag.muted) Object.values(clips).forEach((clip) => clip.pause());
+    return audioBag.muted;
+  },
 };
 
 function nav(active) {
