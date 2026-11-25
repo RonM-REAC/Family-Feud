@@ -312,8 +312,8 @@ function bootBoard() {
     if (strikes >= 3) return;
     strikes += 1;
     sounds.strike();
-    bigx.hidden = false;
-    setTimeout(() => { bigx.hidden = true; }, 700);
+    bigx.classList.add("show");
+    setTimeout(() => { bigx.classList.remove("show"); }, 700);
     paint();
   }
 
@@ -324,9 +324,9 @@ function bootBoard() {
     if (!total) return;
     scores[side] += total;
     sounds.points();
-    flash.hidden = false;
+    flash.classList.add("show");
     flash.textContent = "+" + total;
-    setTimeout(() => { flash.hidden = true; }, 1100);
+    setTimeout(() => { flash.classList.remove("show"); }, 1100);
     paintScores();
   }
 

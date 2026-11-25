@@ -216,7 +216,7 @@ function BoardPage() {
       )}
 
       {bigX && (
-        <div className="pointer-events-none fixed inset-0 flex items-center justify-center text-[40vw] font-black text-[#e23d4a]">
+        <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center text-[28vw] font-black text-[#e23d4a]">
           X
         </div>
       )}

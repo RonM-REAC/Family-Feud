@@ -61,7 +61,7 @@ input, textarea {
 .slots { display: grid; gap: 8px; }
 @media (min-width: 760px) { .slots { grid-template-columns: 1fr 1fr; } }
 .slot {
-  min-height: 64px; display: flex; border: 2px solid #2a4a7a; background: #0d2137; border-radius: 10px;
+  min-height: 44px; display: flex; border: 2px solid #2a4a7a; background: #0d2137; border-radius: 10px;
   overflow: hidden; color: inherit; text-align: left; padding: 0; width: 100%;
 }
 .slot.on { border-color: var(--gold); box-shadow: 0 0 16px rgba(240,196,58,.35); }
@@ -77,8 +77,10 @@ input, textarea {
   font-size: 2rem; font-weight: 900; color: transparent;
 }
 .x.on { border-color: var(--red); color: var(--red); background: #2a0a0a; }
-.bigx { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 40vw; font-weight: 900; color: var(--red); pointer-events: none; }
-.flash { position: fixed; top: 38%; left: 50%; transform: translateX(-50%); font-size: 5rem; font-weight: 900; color: var(--gold); pointer-events: none; }
+.bigx { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; font-size: 40vw; font-weight: 900; color: var(--red); pointer-events: none; }
+.bigx.show { display: flex; }
+.flash { position: fixed; top: 38%; left: 50%; transform: translateX(-50%); font-size: 5rem; font-weight: 900; color: var(--gold); pointer-events: none; display: none; }
+.flash.show { display: block; }
 .controls { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
 .red { background: var(--red); border-color: var(--red); }
 .file-label input { display: none; }
@@ -436,8 +438,8 @@ function bootBoard() {
     if (strikes >= 3) return;
     strikes += 1;
     sounds.strike();
-    bigx.hidden = false;
-    setTimeout(() => { bigx.hidden = true; }, 700);
+    bigx.classList.add("show");
+    setTimeout(() => { bigx.classList.remove("show"); }, 700);
     paint();
   }
 
@@ -448,9 +450,9 @@ function bootBoard() {
     if (!total) return;
     scores[side] += total;
     sounds.points();
-    flash.hidden = false;
+    flash.classList.add("show");
     flash.textContent = "+" + total;
-    setTimeout(() => { flash.hidden = true; }, 1100);
+    setTimeout(() => { flash.classList.remove("show"); }, 1100);
     paintScores();
   }
 
