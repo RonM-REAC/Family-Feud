@@ -29,19 +29,14 @@ function JackpotBoard() {
     };
     void refresh();
     const poll = window.setInterval(() => void refresh(), 1200);
-    const clock = window.setInterval(() => {
-      setState((current) => {
-        if (!current) return current;
-        setSeconds(getRemainingSeconds(current));
-        return current;
-      });
-    }, 200);
-    return () => { alive = false; window.clearInterval(poll); window.clearInterval(clock); };
+    return () => { alive = false; window.clearInterval(poll); };
   }, []);
 
   useEffect(() => {
-    if (state) setSeconds(getRemainingSeconds(state));
-  }, [state?.timerSeconds, state?.timerRunning, state?.timerStartedAt]);
+    if (!state) return;
+    const clock = window.setInterval(() => setSeconds(getRemainingSeconds(state)), 200);
+    return () => window.clearInterval(clock);
+  }, [state]);
 
   const question = useMemo(() => state ? getCurrentQuestion(state) : null, [state]);
   const answers = question?.answers ?? [];
