@@ -2,6 +2,7 @@
 const JP_SUPABASE_URL = "https://twzywooeefkbldrphsie.supabase.co";
 const JP_SUPABASE_KEY = "sb_publishable_A1gGz_adW1DT8zIoyBIoww_K3AP1RZd";
 const JP = window.supabase.createClient(JP_SUPABASE_URL, JP_SUPABASE_KEY);
+const ANSWER_COUNT = 5;
 const $ = (id) => document.getElementById(id);
 let state = null;
 let primed = false;
@@ -95,8 +96,11 @@ function currentQ() {
   return state?.questions?.[state.currentQuestion] || null;
 }
 
-function hasScore(answer) {
-  return Number(answer?.points) > 0;
+/* null means no score entered; 0 is a real score. */
+function scoreOf(answer) {
+  const points = answer?.points;
+  if (points === null || points === undefined || points === "") return null;
+  return Number(points) || 0;
 }
 
 function render() {
@@ -109,22 +113,26 @@ function render() {
   $("score2").textContent = state.scores?.[1] ?? 0;
   document.querySelectorAll(".jp-score").forEach((el) => el.classList.toggle("masked", !state.scoresVisible));
   const ans = q?.answers || [];
-  const fresh = [];
+  const changed = [];
+  const next = [];
   $("answers").innerHTML = "";
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < ANSWER_COUNT; i++) {
     const a = ans[i];
     const revealed = Boolean(a && a.revealed);
-    if (primed && revealed && !shown[i]) fresh.push(a);
+    const score = revealed ? scoreOf(a) : null;
+    /* Snapshot of what viewers see, so a newly shown or updated answer can be detected. */
+    next[i] = revealed ? JSON.stringify([a.text, score]) : null;
+    if (primed && next[i] !== null && next[i] !== shown[i] && score !== null) changed.push(score);
     const card = document.createElement("div");
     card.className = "jp-answer" + (!revealed ? " jp-hidden" : "");
     card.innerHTML = `<div class="jp-number">${i + 1}</div><div class="jp-answer-text"></div><div class="jp-points"></div>`;
     card.querySelector(".jp-answer-text").textContent = a?.text || "";
-    card.querySelector(".jp-points").textContent = revealed && hasScore(a) ? a.points : "";
+    card.querySelector(".jp-points").textContent = score ?? "";
     $("answers").append(card);
   }
-  shown = ans.map((a) => Boolean(a && a.revealed));
-  while (shown.length < 10) shown.push(false);
-  if (primed) fresh.forEach((a) => playClip(hasScore(a) ? "correct" : "wrong"));
+  shown = next;
+  /* Each sound plays once per update, even if several answers changed together. */
+  new Set(changed.map((score) => (score > 0 ? "correct" : "wrong"))).forEach(playClip);
   primed = true;
 }
 
@@ -152,7 +160,8 @@ async function load() {
 JP.channel("jackpot-board-live").on("postgres_changes", { event: "*", schema: "public", table: "jackpot_state", filter: "id=eq.main" }, (payload) => {
   if (payload.new?.state) {
     const nextQuestion = payload.new.state.currentQuestion;
-    if (state && nextQuestion !== state.currentQuestion) primed = false;
+    const removed = state && payload.new.state.questions?.length < state.questions?.length;
+    if (state && (nextQuestion !== state.currentQuestion || removed)) primed = false;
     state = payload.new.state;
     render();
   }
