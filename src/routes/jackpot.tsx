@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Eye, EyeOff, Trophy, Timer, Wifi, WifiOff } from "lucide-react";
 import { SiteNav } from "@/components/site-nav";
 import { getCurrentQuestion, getRemainingSeconds, loadJackpotState, type JackpotState } from "@/lib/jackpot";
@@ -40,6 +40,22 @@ function JackpotBoard() {
 
   const question = useMemo(() => state ? getCurrentQuestion(state) : null, [state]);
   const answers = question?.answers ?? [];
+  const heard = useRef<{ question: number; flags: boolean[] } | null>(null);
+
+  useEffect(() => {
+    const questionIndex = state?.currentQuestion ?? 0;
+    const flags = Array.from({ length: 10 }, (_, i) => Boolean(answers[i]?.revealed));
+    const previous = heard.current;
+    if (previous && previous.question === questionIndex) {
+      flags.forEach((on, i) => {
+        if (!on || previous.flags[i]) return;
+        const file = Number(answers[i]?.points) > 0 ? "correctanswer.mp3" : "wronganswer.mp3";
+        const clip = new Audio("sounds/" + file);
+        clip.play().catch(() => {});
+      });
+    }
+    heard.current = { question: questionIndex, flags };
+  }, [state, answers]);
 
   return (
     <main className="min-h-screen bg-[#071422] text-[#f4efe4]">
