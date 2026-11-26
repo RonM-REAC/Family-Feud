@@ -3,6 +3,7 @@ const JP_SUPABASE_URL = "https://twzywooeefkbldrphsie.supabase.co";
 const JP_SUPABASE_KEY = "sb_publishable_A1gGz_adW1DT8zIoyBIoww_K3AP1RZd";
 const JP = window.supabase.createClient(JP_SUPABASE_URL, JP_SUPABASE_KEY);
 const ROUND_SECONDS = 25;
+const ANSWER_COUNT = 5;
 const $ = (id) => document.getElementById(id);
 let state = null;
 let saveBusy = false;
@@ -42,9 +43,15 @@ function resetClock() {
   state.timerStartedAt = null;
 }
 
+/* Blank stays blank (no sound on the board); 0 is saved as a real score. */
+function readPoints(value) {
+  if (String(value).trim() === "") return null;
+  return Math.max(0, Math.round(Number(value) || 0));
+}
+
 function padAnswers(question) {
   if (!Array.isArray(question.answers)) question.answers = [];
-  while (question.answers.length < 10) question.answers.push({ text: "", points: 0, revealed: false });
+  while (question.answers.length < ANSWER_COUNT) question.answers.push({ text: "", points: null, revealed: false });
 }
 
 async function save() {
@@ -76,14 +83,14 @@ function render() {
   if (!editingQuestion) {
     const editor = $("answerInputs");
     editor.innerHTML = "";
-    for (let i = 0; i < 10; i++) {
-      const answer = current?.answers?.[i] || { text: "", points: 0 };
+    for (let i = 0; i < ANSWER_COUNT; i++) {
+      const answer = current?.answers?.[i] || { text: "", points: null };
       const row = document.createElement("div");
       row.className = "jp-answer-editor";
       row.style.gridColumn = "1 / -1";
       row.innerHTML = `<input aria-label="Answer ${i + 1}" placeholder="Answer ${i + 1}"><input aria-label="Points ${i + 1}" type="number" placeholder="Points">`;
       row.children[0].value = answer.text || "";
-      row.children[1].value = answer.points || "";
+      row.children[1].value = answer.points ?? "";
       editor.append(row);
     }
   }
@@ -91,8 +98,8 @@ function render() {
   if (!editingReveal) {
     const reveal = $("revealButtons");
     reveal.innerHTML = "";
-    for (let i = 0; i < 10; i++) {
-      const answer = current?.answers?.[i] || { text: "", points: 0, revealed: false };
+    for (let i = 0; i < ANSWER_COUNT; i++) {
+      const answer = current?.answers?.[i] || { text: "", points: null, revealed: false };
       const row = document.createElement("div");
       row.className = "jp-reveal-row";
       row.innerHTML = `<span class="jp-reveal-num">${i + 1}</span><input aria-label="Reveal answer ${i + 1}" placeholder="Answer ${i + 1}"><input aria-label="Reveal points ${i + 1}" type="number" placeholder="Points"><button type="button" class="jp-button">Show</button><button type="button" class="jp-button secondary">Hide</button>`;
@@ -101,7 +108,7 @@ function render() {
       const showButton = row.children[3];
       const hideButton = row.children[4];
       textInput.value = answer.text || "";
-      pointsInput.value = answer.points || "";
+      pointsInput.value = answer.points ?? "";
       showButton.className = "jp-button" + (answer.revealed ? " revealed" : "");
       showButton.textContent = answer.revealed ? "Update" : "Show";
       showButton.onclick = () => {
@@ -114,7 +121,7 @@ function render() {
           return;
         }
         padAnswers(live);
-        live.answers[i] = { text, points: Math.max(0, Math.round(Number(pointsInput.value) || 0)), revealed: true };
+        live.answers[i] = { text, points: readPoints(pointsInput.value), revealed: true };
         save();
       };
       hideButton.onclick = () => {
@@ -243,14 +250,10 @@ function readEditedQuestion() {
   const rows = [...$("answerInputs").children];
   const answers = rows.map((row, i) => {
     const text = row.children[0].value.trim();
-    const points = Math.max(0, Math.round(Number(row.children[1].value) || 0));
+    const points = readPoints(row.children[1].value);
     const same = previous[i] && previous[i].text === text;
     return { text, points, revealed: Boolean(same && previous[i].revealed) };
   }).filter((answer) => answer.text);
-  if (answers.length > 10) {
-    alert("Maximum 10 answers.");
-    return null;
-  }
   return { question, answers };
 }
 
