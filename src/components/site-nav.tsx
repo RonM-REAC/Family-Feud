@@ -3,9 +3,8 @@ import { Link } from "@tanstack/react-router";
 const links = [
   { to: "/", label: "Home" },
   { to: "/board", label: "Board" },
+  { to: "/jackpot", label: "Jackpot" },
   { to: "/admin", label: "Questions" },
-  { to: "/jackpot", label: "JACKPOT" },
-  { to: "/jackpot-admin", label: "Jackpot Admin" },
 ] as const;
 
 export function SiteNav({ tone = "bar" }: { tone?: "bar" | "inline" }) {

@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { Eye, EyeOff, Trophy, Timer, Wifi, WifiOff } from "lucide-react";
 import { SiteNav } from "@/components/site-nav";
@@ -50,9 +50,12 @@ function JackpotBoard() {
             <p className="text-xs font-extrabold tracking-[0.35em] text-[#9ec4ff]">THE LIVE ANSWER CHALLENGE</p>
             <h1 className="font-[family-name:var(--font-display)] text-5xl tracking-wide text-[#f0c43a] sm:text-7xl">JACKPOT</h1>
           </div>
-          <div className="flex items-center gap-2 rounded-full border border-white/15 bg-[#10243f] px-4 py-2 text-sm">
+          <div className="flex items-center gap-2">
+            <Link to="/jackpot-admin" className="rounded-full border border-[#f0c43a]/50 px-4 py-2 text-sm font-bold text-[#f0c43a] hover:bg-[#f0c43a] hover:text-[#071422]">Host controls</Link>
+            <div className="flex items-center gap-2 rounded-full border border-white/15 bg-[#10243f] px-4 py-2 text-sm">
             {connected ? <Wifi className="h-4 w-4 text-emerald-400" /> : <WifiOff className="h-4 w-4 text-rose-400" />}
             <span>{connected ? "LIVE SYNC" : "CONNECTING"}</span>
+            </div>
           </div>
         </header>
 
