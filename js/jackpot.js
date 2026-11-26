@@ -9,22 +9,67 @@ let shown = [];
 
 const soundBase = location.pathname.includes("/survey-showdown-site/") ? "../sounds/" : "sounds/";
 const clips = {
-  correct: new Audio(soundBase + "correctanswer.mp3"),
-  wrong: new Audio(soundBase + "wronganswer.mp3"),
+  correct: new Audio(new URL(soundBase + "correctanswer.mp3", location.href).href),
+  wrong: new Audio(new URL(soundBase + "wronganswer.mp3", location.href).href),
 };
+let soundReady = false;
+let pendingSound = null;
+let unlocking = false;
+
 Object.values(clips).forEach((clip) => { clip.preload = "auto"; });
 
-function playClip(clip) {
-  clip.currentTime = 0;
-  clip.play().catch(() => {});
+function soundButton() {
+  return document.getElementById("enable-sound");
 }
 
-window.addEventListener("pointerdown", () => {
-  clips.correct.play().then(() => {
-    clips.correct.pause();
-    clips.correct.currentTime = 0;
-  }).catch(() => {});
-}, { once: true });
+function markSound(on) {
+  const button = soundButton();
+  if (!button) return;
+  button.textContent = on ? "Sound on" : "Enable sound";
+  button.classList.toggle("on", on);
+}
+
+function playClip(name) {
+  const clip = clips[name];
+  if (!clip) return;
+  if (!soundReady) {
+    pendingSound = name;
+    markSound(false);
+    return;
+  }
+  clip.pause();
+  clip.currentTime = 0;
+  clip.play().catch(() => {
+    soundReady = false;
+    pendingSound = name;
+    markSound(false);
+  });
+}
+
+function enableSound() {
+  if (soundReady || unlocking) return;
+  unlocking = true;
+  const clip = clips.correct;
+  clip.muted = true;
+  const started = clip.play();
+  const done = () => {
+    clip.pause();
+    clip.currentTime = 0;
+    clip.muted = false;
+    soundReady = true;
+    markSound(true);
+    if (pendingSound) {
+      const next = pendingSound;
+      pendingSound = null;
+      playClip(next);
+    }
+  };
+  if (started && started.then) started.then(done).catch(() => { markSound(false); });
+  else done();
+}
+
+document.addEventListener("pointerdown", enableSound);
+window.addEventListener("keydown", enableSound);
 
 function defaultState() {
   return {
@@ -79,7 +124,7 @@ function render() {
   }
   shown = ans.map((a) => Boolean(a && a.revealed));
   while (shown.length < 10) shown.push(false);
-  if (primed) fresh.forEach((a) => playClip(hasScore(a) ? clips.correct : clips.wrong));
+  if (primed) fresh.forEach((a) => playClip(hasScore(a) ? "correct" : "wrong"));
   primed = true;
 }
 

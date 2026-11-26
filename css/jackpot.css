@@ -6,3 +6,4 @@
 .topnav .links{display:flex;gap:8px;flex-wrap:wrap}
 .topnav .links a{border:1px solid rgba(255,207,74,.45);border-radius:999px;padding:6px 12px;text-decoration:none;font-weight:700;color:#eef4ff}
 .topnav .links a.active{background:var(--gold);color:#161d2b;border-color:var(--gold)}
+.jp-sound{border:0;border-radius:999px;padding:10px 16px;background:#ffcf4a;color:#161d2b;font-weight:900;cursor:pointer}.jp-sound.on{background:#1f8f4e;color:white}
