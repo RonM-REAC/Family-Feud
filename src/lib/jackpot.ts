@@ -30,7 +30,7 @@ export const defaultJackpotState = (): JackpotState => ({
   currentQuestion: 0,
   scores: [0, 0],
   activePlayer: 0,
-  timerSeconds: 20,
+  timerSeconds: 25,
   timerRunning: false,
   timerStartedAt: null,
   scoresVisible: false,
@@ -77,7 +77,7 @@ export function getRemainingSeconds(state: JackpotState): number {
 }
 
 export function resetTimer(state: JackpotState): JackpotState {
-  return { ...state, timerSeconds: 20, timerRunning: false, timerStartedAt: null };
+  return { ...state, timerSeconds: 25, timerRunning: false, timerStartedAt: null };
 }
 
 export function normalizeQuestion(question: string, answers: JackpotAnswer[]): JackpotQuestion {

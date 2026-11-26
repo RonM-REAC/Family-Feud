@@ -81,13 +81,42 @@ function JackpotAdmin() {
     if (state) void commit({ ...state, ...patch }, message);
   }
 
-  function toggleReveal(index: number) {
+  function showAnswer(index: number) {
     if (!state) return;
-    const questions = state.questions.map((question, qIndex) => qIndex !== state.currentQuestion ? question : {
-      ...question,
-      answers: question.answers.map((answer, answerIndex) => answerIndex === index ? { ...answer, revealed: !answer.revealed } : answer),
+    const typed = draftAnswers[index];
+    const text = (typed?.text || "").trim();
+    if (!text) {
+      setNotice("Type an answer, then click Show.");
+      return;
+    }
+    const questions = state.questions.map((question, qIndex) => {
+      if (qIndex !== state.currentQuestion) return question;
+      const answers = Array.from({ length: 10 }, (_, i) => question.answers[i] ?? blankAnswer());
+      answers[index] = { text, points: Math.max(0, Math.round(Number(typed.points) || 0)), revealed: true };
+      return { ...question, answers };
     });
-    update({ questions });
+    void commit({ ...state, questions }, "Answer updated on the jackpot board.");
+  }
+
+  function hideAnswer(index: number) {
+    if (!state) return;
+    const questions = state.questions.map((question, qIndex) => {
+      if (qIndex !== state.currentQuestion) return question;
+      const answers = Array.from({ length: 10 }, (_, i) => question.answers[i] ?? blankAnswer());
+      if (answers[index]) answers[index] = { ...answers[index], revealed: false };
+      return { ...question, answers };
+    });
+    void commit({ ...state, questions }, "Answer hidden on the jackpot board.");
+  }
+
+  function deleteQuestion(index: number) {
+    if (!state || !window.confirm("Delete this question?")) return;
+    const questions = state.questions.filter((_, i) => i !== index);
+    const nextQuestions = questions.length ? questions : [{ question: "New question", answers: [] }];
+    let currentQuestion = state.currentQuestion;
+    if (index < currentQuestion) currentQuestion -= 1;
+    if (currentQuestion >= nextQuestions.length) currentQuestion = nextQuestions.length - 1;
+    void commit({ ...resetTimer(state), questions: nextQuestions, currentQuestion }, "Question deleted.");
   }
 
   function changeQuestion(index: number) {
@@ -103,7 +132,7 @@ function JackpotAdmin() {
   function startTimer() {
     if (!state) return;
     const remaining = getRemainingSeconds(state);
-    update({ timerSeconds: remaining > 0 ? remaining : 20, timerRunning: true, timerStartedAt: Date.now() }, "Timer started.");
+    update({ timerSeconds: remaining > 0 ? remaining : 25, timerRunning: true, timerStartedAt: Date.now() }, "Timer started.");
   }
 
   function stopTimer() {
@@ -159,7 +188,7 @@ function JackpotAdmin() {
                 <div className="mb-4 grid grid-cols-3 gap-2">
                   <ActionButton onClick={startTimer}><Timer className="h-4 w-4" /> Start</ActionButton>
                   <ActionButton secondary onClick={stopTimer}>Pause</ActionButton>
-                  <ActionButton secondary onClick={() => update(resetTimer(state), "Timer reset to 20 seconds.")}><RotateCcw className="h-4 w-4" /> Reset</ActionButton>
+                  <ActionButton secondary onClick={() => update(resetTimer(state), "Timer reset to 25 seconds.")}><RotateCcw className="h-4 w-4" /> Reset 25s</ActionButton>
                 </div>
                 <div className="mb-4 rounded-xl bg-[#071422] p-4 text-center">
                   <span className="text-xs font-black tracking-[0.2em] text-[#9ec4ff]">TIME REMAINING</span>
@@ -190,9 +219,13 @@ function JackpotAdmin() {
               <Panel title="Question bank">
                 <div className="space-y-2">
                   {state.questions.map((question, index) => (
-                    <button key={index} type="button" onClick={() => changeQuestion(index)} className={`flex min-h-12 w-full items-center justify-between gap-3 rounded-lg border px-3 py-2 text-left text-sm font-semibold ${index === state.currentQuestion ? "border-[#f0c43a] bg-[#17365b] text-[#f0c43a]" : "border-white/10 bg-[#071422] text-[#d7e4f5]"}`}>
-                      <span className="min-w-0 truncate">{index + 1}. {question.question}</span><span className="shrink-0 text-xs">{question.answers.length}/10</span>
-                    </button>
+                    <div key={index} className={`flex min-h-12 items-center justify-between gap-3 rounded-lg border px-3 py-2 text-sm font-semibold ${index === state.currentQuestion ? "border-[#f0c43a] bg-[#17365b] text-[#f0c43a]" : "border-white/10 bg-[#071422] text-[#d7e4f5]"}`}>
+                      <span className="min-w-0 truncate">{index + 1}. {question.question}</span>
+                      <span className="flex shrink-0 gap-2">
+                        <button type="button" onClick={() => changeQuestion(index)} className="rounded-full border border-white/20 px-3 py-1 text-xs">Edit</button>
+                        <button type="button" onClick={() => deleteQuestion(index)} className="rounded-full bg-rose-600 px-3 py-1 text-xs text-white">Delete</button>
+                      </span>
+                    </div>
                   ))}
                 </div>
               </Panel>
@@ -222,17 +255,18 @@ function JackpotAdmin() {
               </Panel>
 
               <Panel title="Reveal answers on TV">
-                <p className="mb-3 text-sm text-[#c5d4e8]">Tap a numbered answer to reveal or hide it on the player screen.</p>
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
-                  {Array.from({ length: 10 }, (_, index) => {
-                    const answer = current?.answers[index];
-                    const revealed = Boolean(answer?.revealed);
+                <p className="mb-3 text-sm text-[#c5d4e8]">Change an answer, then click Show. The jackpot board updates immediately.</p>
+                <div className="space-y-2">
+                  {draftAnswers.map((answer, index) => {
+                    const revealed = Boolean(current?.answers[index]?.revealed);
                     return (
-                      <button key={index} type="button" disabled={!answer} onClick={() => toggleReveal(index)} className={`flex min-h-16 flex-col items-center justify-center rounded-xl border-2 px-2 py-2 text-center disabled:opacity-30 ${revealed ? "border-emerald-400 bg-emerald-950/50 text-emerald-200" : "border-white/15 bg-[#071422] text-[#c5d4e8]"}`}>
-                        <span className="text-lg font-black">{index + 1}</span>
-                        <span className="max-w-full truncate text-[10px] font-bold">{answer?.text || "Empty"}</span>
-                        <span className="text-[10px]">{revealed ? "REVEALED" : "HIDDEN"}</span>
-                      </button>
+                      <div key={index} className="grid grid-cols-[2rem_minmax(0,1fr)_4.5rem_auto_auto] items-center gap-2">
+                        <span className="text-center font-black text-[#f0c43a]">{index + 1}</span>
+                        <input value={answer.text} onChange={(event) => updateAnswer(index, { text: event.target.value })} className="min-h-11 min-w-0 rounded-lg border border-white/15 bg-[#071422] px-3" placeholder={`Answer ${index + 1}`} />
+                        <input type="number" min="0" value={answer.points || ""} onChange={(event) => updateAnswer(index, { points: Number(event.target.value) })} className="min-h-11 w-full rounded-lg border border-white/15 bg-[#071422] px-2 text-center" placeholder="0" />
+                        <button type="button" onClick={() => showAnswer(index)} className={`min-h-11 rounded-lg px-3 text-sm font-extrabold ${revealed ? "bg-emerald-500 text-[#071422]" : "bg-[#f0c43a] text-[#071422]"}`}>{revealed ? "Update" : "Show"}</button>
+                        <button type="button" onClick={() => hideAnswer(index)} className="min-h-11 rounded-lg border border-white/20 px-3 text-sm font-bold">Hide</button>
+                      </div>
                     );
                   })}
                 </div>

@@ -29,7 +29,7 @@ function Home() {
             <div className="min-w-0 flex-1">
               <p className="text-xs font-black tracking-[0.3em] text-[#9ec4ff]">A SECOND GAME MODE</p>
               <h2 className="mt-1 font-[family-name:var(--font-display)] text-4xl tracking-wide text-[#f0c43a] sm:text-5xl">JACKPOT</h2>
-              <p className="mt-2 text-[#d7e4f5]">A fast two-player answer challenge with a 20-second timer, ten revealable answers, hidden scores, and a mobile-friendly host dashboard.</p>
+              <p className="mt-2 text-[#d7e4f5]">A fast two-player answer challenge with a 25-second timer, ten revealable answers, hidden scores, and a mobile-friendly host dashboard.</p>
             </div>
             <div className="flex shrink-0 flex-wrap justify-center gap-2">
               <Link to="/jackpot" className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#f0c43a] px-5 py-2 font-extrabold text-[#071422]"><MonitorPlay className="h-4 w-4" /> Play</Link>
