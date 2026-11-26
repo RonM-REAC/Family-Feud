@@ -57,8 +57,9 @@ function padAnswers(question) {
 async function save() {
   if (saveBusy) return;
   saveBusy = true;
-  state.timerSeconds = remaining();
-  if (state.timerSeconds <= 0) {
+  /* While running, timerSeconds stays the value at timerStartedAt; rewriting it would count time twice. */
+  if (state.timerRunning && remaining() <= 0) {
+    state.timerSeconds = 0;
     state.timerRunning = false;
     state.timerStartedAt = null;
   }
