@@ -3,6 +3,7 @@ const JP_SUPABASE_URL = "https://twzywooeefkbldrphsie.supabase.co";
 const JP_SUPABASE_KEY = "sb_publishable_A1gGz_adW1DT8zIoyBIoww_K3AP1RZd";
 const JP = window.supabase.createClient(JP_SUPABASE_URL, JP_SUPABASE_KEY);
 const ANSWER_COUNT = 5;
+const ROUND_SECONDS = 25;
 const $ = (id) => document.getElementById(id);
 let state = null;
 let primed = false;
@@ -12,7 +13,10 @@ const soundBase = location.pathname.includes("/survey-showdown-site/") ? "../sou
 const clips = {
   correct: new Audio(new URL(soundBase + "correctanswer.mp3", location.href).href),
   wrong: new Audio(new URL(soundBase + "wronganswer.mp3", location.href).href),
+  timer: new Audio(new URL(soundBase + "timer.mp3", location.href).href),
+  timesup: new Audio(new URL(soundBase + "timesup.mp3", location.href).href),
 };
+let timerLive = false;
 let soundReady = false;
 let pendingSound = null;
 let unlocking = false;
@@ -64,6 +68,7 @@ function enableSound() {
       pendingSound = null;
       playClip(next);
     }
+    syncTimerSound();
   };
   if (started && started.then) started.then(done).catch(() => { markSound(false); });
   else done();
@@ -71,6 +76,30 @@ function enableSound() {
 
 document.addEventListener("pointerdown", enableSound);
 window.addEventListener("keydown", enableSound);
+
+/* Timer sound follows the clock; time's-up plays once when a running clock reaches zero. */
+function syncTimerSound() {
+  if (!state) return;
+  const left = remaining();
+  const live = Boolean(state.timerRunning) && left > 0;
+  if (live) {
+    clips.timesup.pause();
+    if (soundReady && clips.timer.paused) {
+      /* Resume where the clock is, so Stop/Start does not restart the track. */
+      const sinceStart = (Date.now() - state.timerStartedAt) / 1000;
+      clips.timer.currentTime = Math.max(0, ROUND_SECONDS - state.timerSeconds + sinceStart);
+      clips.timer.play().catch(() => {
+        soundReady = false;
+        markSound(false);
+      });
+    }
+  } else {
+    clips.timer.pause();
+    if (left > 0) clips.timesup.pause();
+    else if (timerLive) playClip("timesup");
+  }
+  timerLive = live;
+}
 
 function defaultState() {
   return {
@@ -134,6 +163,7 @@ function render() {
   /* Each sound plays once per update, even if several answers changed together. */
   new Set(changed.map((score) => (score > 0 ? "correct" : "wrong"))).forEach(playClip);
   primed = true;
+  syncTimerSound();
 }
 
 function remaining() {
