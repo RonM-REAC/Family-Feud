@@ -119,8 +119,17 @@ body.board-page { height: 100vh; overflow: hidden; }
   font-size: 2rem; font-weight: 900; color: transparent;
 }
 .x.on { border-color: var(--red); color: var(--red); background: #2a0a0a; }
-.bigx { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; font-size: 40vw; font-weight: 900; color: var(--red); pointer-events: none; }
+.bigx { position: fixed; inset: 0; z-index: 20; display: none; align-items: center; justify-content: center; gap: 2.5vw; pointer-events: none; }
 .bigx.show { display: flex; }
+.bigx-box {
+  position: relative; flex: 0 0 auto; width: min(21vw, 45vh); aspect-ratio: 1;
+  background: var(--red); border: .8vmin solid #fff; border-radius: 2.5vmin; box-shadow: 0 0 6vmin rgba(0,0,0,.75);
+}
+.bigx-box::before, .bigx-box::after {
+  content: ""; position: absolute; top: 50%; left: 50%; width: 105%; height: 15%;
+  background: #fff; border-radius: 99px; transform: translate(-50%, -50%) rotate(45deg);
+}
+.bigx-box::after { transform: translate(-50%, -50%) rotate(-45deg); }
 .flash { position: fixed; top: 38%; left: 50%; transform: translateX(-50%); font-size: 5rem; font-weight: 900; color: var(--gold); pointer-events: none; display: none; }
 .flash.show { display: block; }
 .controls {
@@ -194,7 +203,7 @@ body.board-page { height: 100vh; overflow: hidden; }
       </div>
     </div>
   </div>
-  <div id="bigx" class="bigx" hidden>X</div>
+  <div id="bigx" class="bigx" hidden></div>
   <div id="flash" class="flash" hidden></div>
   <script>
 const KEY = "survey-showdown-v1";
@@ -479,6 +488,7 @@ function bootBoard() {
   let index = 0;
   let open = new Set();
   let strikes = 0;
+  let bigxTimer = null;
   let scores = JSON.parse(localStorage.getItem(SCORES_KEY) || "null") || {
     leftName: "TEAM A", rightName: "TEAM B", leftScore: 0, rightScore: 0,
   };
@@ -539,12 +549,19 @@ function bootBoard() {
     paint();
   }
 
+  /* One red box per strike so far, centered on screen. */
+  function showStrikes() {
+    bigx.innerHTML = '<div class="bigx-box" role="img" aria-label="X"></div>'.repeat(strikes);
+    bigx.classList.add("show");
+    clearTimeout(bigxTimer);
+    bigxTimer = setTimeout(() => { bigx.classList.remove("show"); }, 1500);
+  }
+
   function addStrike() {
     if (strikes >= 4) return;
     strikes += 1;
     sounds.strike();
-    bigx.classList.add("show");
-    setTimeout(() => { bigx.classList.remove("show"); }, 700);
+    showStrikes();
     paint();
   }
 
